@@ -49,7 +49,7 @@ export default function Todo() {
             {tasks.map((task,index)=>
                 <li key={index} className='border border-gray-700 bg-gray-600 rounded-lg p-3 flex justify-between items-center'draggable onDragStart={(e)=> onDragStart(e, index)} onDrop={()=>dropItem (index)} onDragOver={(e)=> e.preventDefault()}>
                 <span>{task}</span>
-                <button className='bg-red-500 hover:bg-red-600 text-white px-3 py-2' onClick={() =>Delete(index)}>Delete</button>
+                <button className='rounded bg-red-500 hover:bg-red-600 text-white px-3 py-2' onClick={() =>Delete(index)}>Delete</button>
             </li>
             )}
         </ul>
