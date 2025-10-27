@@ -105,7 +105,7 @@ function dropItem(index) {
     // Swap logic implementation
 }
 
-Adding New Features
+## Adding New Features
 To extend functionality:
 
 Task Categories: Add a category field to task objects
@@ -114,20 +114,7 @@ Due Dates: Implement date picker and sorting
 
 Task Prioritization: Add priority levels with color coding
 
-
-## Contributing
-Fork the project
-
-Create your feature branch (git checkout -b feature/AmazingFeature)
-
-Commit your changes (git commit -m 'Add some AmazingFeature')
-
-Push to the branch (git push origin feature/AmazingFeature)
-
-Open a Pull Request
-
-
-🔮 Future Enhancements
+## Future Enhancements
 Task categories and filtering
 
 Due dates and reminders
