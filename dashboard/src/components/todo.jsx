@@ -13,48 +13,63 @@ export default function Todo() {
     }
     function Add(){
         if(newTask.trim()!==""){
-       setTasks(tas =>[...tas,newTask])
+            const yPosition = tasks.length * 70 + 200;
+            setTasks((tas) => [
+                ...tas,
+                { text: newTask, x: 100, y: yPosition, id: Date.now() },
+      ]);
+      setNewTask("");
        setNewTask("")
         }
     }
-    function Delete(index){
-        const deletetask = tasks.filter((_,indexdelete)=>indexdelete !== index)
-        setTasks(deletetask)
-    } 
-    function onDragStart(e, index) {
-        setDragitem(index);
-    }
-    function dropItem(index) {
-    if (dragitem === null)
-        return;
-    const newList = [...tasks];
-    const temp = newList[index];
-    newList[index] = newList[dragitem];
-    newList[dragitem] = temp;
+    function handleMouseDown(e, id) {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const target = tasks.find((t) => t.id === id);
+    const offsetX = startX - target.x;
+    const offsetY = startY - target.y;
 
-    setTasks(newList);
-    setDragitem(null);
+    function handleMouseMove(moveEvent) {
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.id === id
+            ? {
+                ...t,
+                x: moveEvent.clientX - offsetX,
+                y: moveEvent.clientY - offsetY,
+              }
+            : t
+        )
+      );
+    }
+     function handleMouseUp() {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    }
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   }
+    function Delete(id){
+        const deletetask = tasks.filter((t)=>t.id !== index)
+    } 
 
   return (
-    <div className='w-full min-h-screen flex flex-col items-center bg-gray-900 text-white'>
-        <div className='border rounded-2xl bg-gray-800 w-full max-w-md mx-auto my-8'>
+    <div className=' relative w-full min-h-screen flex flex-col items-center bg-gray-900 text-white'>
         <h1 className='text-center p-8 font-bold text-5xl'>To do List</h1>
         <div className='text-center m-8 shadow-gray-600'>
             <input className='border rounded-2xl py-4 pr-4 pl-4 text-center w-full mb-3' type="text" placeholder='Enter a task' value={newTask} onChange={Input} />
             <button className='bg-blue-500 hover:bg-blue-600 px-4 py-4 rounded-lg w-full' onClick={Add}>Add</button>
         </div>
-        <div className=' h-auto px-4 pb-4'>
-        <ul className='w-full max-w-md space-y-3'>
-            {tasks.map((task,index)=>
-                <li key={index} className='border border-gray-700 bg-gray-600 rounded-lg p-3 flex justify-between items-center'draggable onDragStart={(e)=> onDragStart(e, index)} onDrop={()=>dropItem (index)} onDragOver={(e)=> e.preventDefault()}>
-                <span>{task}</span>
-                <button className='rounded bg-red-500 hover:bg-red-600 text-white px-3 py-2' onClick={() =>Delete(index)}>Delete</button>
-            </li>
-            )}
-        </ul>
-        </div>
-        </div>
+            {tasks.map((task)=>(
+                <div key={task.id} onMouseDown={(e) => handleMouseDown(e,task.id)} className='absolute border border-gray-700 bg-gray-600 rounded-lg p-3 flex justify-between items-center cursor-move w-[250px]' 
+                style={{left: `${task.x}px`, top: `${task.y}px`}}>
+                    <span>{task.text}</span>
+                    <button className='rounded bg-red-500 hover:bg-red-600 text-white px-3 py-2'
+                    onClick={() => Delete(task.id)}>Delete</button>
+                </div>
+            ))}
     </div>
   )
 }
