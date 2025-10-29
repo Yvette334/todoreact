@@ -3,6 +3,7 @@ import {useLocalStorage} from 'usehooks-ts'
 
 export default function Todo() {
     const[newTask, setNewTask] = useState("")
+    const [activeId, setActiveId] = useState(null)
     const [dragitem, setDragitem] = useState(null);
     const [tasks, setTasks] = useLocalStorage('my_tasks',[])
 
@@ -16,7 +17,7 @@ export default function Todo() {
             const yPosition = tasks.length * 70 + 200;
             setTasks((tas) => [
                 ...tas,
-                { text: newTask, x: 100, y: yPosition, id: Date.now() },
+                { text: newTask, x: 830, y: yPosition, id: Date.now() },
       ]);
       setNewTask("");
        setNewTask("")
@@ -24,6 +25,7 @@ export default function Todo() {
     }
     function handleMouseDown(e, id) {
     e.preventDefault();
+    setActiveId(id)
     const startX = e.clientX;
     const startY = e.clientY;
     const target = tasks.find((t) => t.id === id);
@@ -44,6 +46,7 @@ export default function Todo() {
       );
     }
      function handleMouseUp() {
+      setActiveId(null)
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     }
@@ -52,11 +55,12 @@ export default function Todo() {
     document.addEventListener("mouseup", handleMouseUp);
   }
     function Delete(id){
-        const deletetask = tasks.filter((t)=>t.id !== index)
+        const deletetask = tasks.filter((t)=>t.id !== id)
+        setTasks(deletetask);
     } 
 
   return (
-    <div className=' relative w-full min-h-screen flex flex-col items-center bg-gray-900 text-white'>
+    <div className=' relative w-full overflow-hidden min-h-screen flex flex-col items-center bg-gray-900 text-white'>
         <h1 className='text-center p-8 font-bold text-5xl'>To do List</h1>
         <div className='text-center m-8 shadow-gray-600'>
             <input className='border rounded-2xl py-4 pr-4 pl-4 text-center w-full mb-3' type="text" placeholder='Enter a task' value={newTask} onChange={Input} />
@@ -64,7 +68,7 @@ export default function Todo() {
         </div>
             {tasks.map((task)=>(
                 <div key={task.id} onMouseDown={(e) => handleMouseDown(e,task.id)} className='absolute border border-gray-700 bg-gray-600 rounded-lg p-3 flex justify-between items-center cursor-move w-[250px]' 
-                style={{left: `${task.x}px`, top: `${task.y}px`}}>
+                style={{left: `${task.x}px`, top: `${task.y}px`,zIndex: task.id === activeId ? 9999 : 1,}}>
                     <span>{task.text}</span>
                     <button className='rounded bg-red-500 hover:bg-red-600 text-white px-3 py-2'
                     onClick={() => Delete(task.id)}>Delete</button>
